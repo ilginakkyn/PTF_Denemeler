@@ -1,9 +1,0 @@
-key,duration,strategy,usd_per_mw_year,share_of_perfect,p1,p2
-2h_perfect,2h,Mükemmel öngörü (üst sınır),28128.0,1.0,24427.0,31483.0
-2h_model,2h,Bizim tahmin,24993.0,0.889,21579.0,28100.0
-2h_naive_D,2h,Naif: yarın = bugün,21375.0,0.76,17792.0,24693.0
-2h_rule,2h,Sabit saat kuralı,20671.0,0.735,17774.0,23314.0
-4h_perfect,4h,Mükemmel öngörü (üst sınır),47186.0,1.0,41133.0,52659.0
-4h_model,4h,Bizim tahmin,41428.0,0.878,35703.0,46644.0
-4h_naive_D,4h,Naif: yarın = bugün,34812.0,0.738,29023.0,40171.0
-4h_rule,4h,Sabit saat kuralı,27396.0,0.581,22018.0,32437.0
