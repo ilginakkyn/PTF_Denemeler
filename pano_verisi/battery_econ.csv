@@ -1,0 +1,3 @@
+duration,capex_usd_per_mw,om_usd_per_mw_yr,arbitrage_rev_last12,arbitrage_rev_2y_avg,simple_payback_yrs,cum_cash_yr15_undiscounted,npv_arbitrage_only,extra_revenue_needed_usd_per_mw_yr,breakeven_capex_usd_per_kwh_arbitrage_only
+2h,396000,7920,28412,24993,19.3,-143418,-261339,34359,76.9
+4h,660000,13200,47160,41428,19.4,-241542,-436883,57439,63.8

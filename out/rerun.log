@@ -1,0 +1,59 @@
+                MAE   RMSE  sMAPE  rMAE
+naive_D       10.67  17.13  30.89  1.00
+naive_week    11.39  17.79  32.43  1.07
+naive_mix     10.06  15.05  29.53  0.94
+ridge          8.73  12.14  27.97  0.82
+lgb_unscaled   7.74  11.56  25.64  0.72
+lgb_q50        8.09  12.14  26.46  0.76
+ensemble       7.70  11.31  25.62  0.72
+puant_ext      7.69  11.92  24.87  0.72
+              Eyl24-Ağu25  Eyl25-Ağu26
+naive_D             10.24        11.11
+naive_week          10.21        12.58
+naive_mix            9.35        10.78
+ridge                7.87         9.59
+lgb_unscaled         7.06         8.43
+lgb_q50              7.26         8.93
+ensemble             7.00         8.41
+puant_ext            6.51         8.89
+TL MAE: {'naive_D': 434.8, 'naive_week': 468.3, 'naive_mix': 412.1, 'ridge': 357.3, 'lgb_unscaled': 317.0, 'lgb_q50': 332.1, 'ensemble': 315.5, 'puant_ext': 317.3}
+80% band kapsama: 0.6465794306703397
+wmean                    0.105
+lag24                    0.104
+lag336                   0.057
+load_plan_rel            0.056
+last_hour_D              0.046
+load_plan_vs_lag24       0.043
+hour                     0.038
+lag168                   0.037
+samehour7                0.037
+m28                      0.032
+kgup_minus_load_lag24    0.030
+load_plan_vs_lag168      0.028
+Name: 0, dtype: float64
+ham kapsama 0.647 kalibre (ilk 3 ay hariç) 0.791
+18.54 27.34
+2h perfect {'usd_per_mw_year': np.float64(28128.0), 'cycles_per_year': np.float64(356.6), 'days': 726}
+2h model {'usd_per_mw_year': np.float64(24993.0), 'cycles_per_year': np.float64(355.6), 'days': 726}
+2h model_q50 {'usd_per_mw_year': np.float64(24617.0), 'cycles_per_year': np.float64(354.0), 'days': 726}
+2h naive_D {'usd_per_mw_year': np.float64(21375.0), 'cycles_per_year': np.float64(356.6), 'days': 726}
+2h rule {'usd_per_mw_year': np.float64(20671.0), 'cycles_per_year': np.float64(321.4), 'days': 726}
+4h perfect {'usd_per_mw_year': np.float64(47186.0), 'cycles_per_year': np.float64(350.4), 'days': 726}
+4h model {'usd_per_mw_year': np.float64(41428.0), 'cycles_per_year': np.float64(350.8), 'days': 726}
+4h model_q50 {'usd_per_mw_year': np.float64(40560.0), 'cycles_per_year': np.float64(347.0), 'days': 726}
+4h naive_D {'usd_per_mw_year': np.float64(34812.0), 'cycles_per_year': np.float64(350.5), 'days': 726}
+4h rule {'usd_per_mw_year': np.float64(27396.0), 'cycles_per_year': np.float64(321.4), 'days': 726}
+              Eyl24-Ağu25  Eyl25-Ağu26
+2h_perfect        24427.0      31483.0
+2h_model          21579.0      28100.0
+2h_model_q50      21359.0      27571.0
+2h_naive_D        17792.0      24693.0
+2h_rule           17774.0      23314.0
+4h_perfect        41133.0      52659.0
+4h_model          35703.0      46644.0
+4h_model_q50      35059.0      45561.0
+4h_naive_D        29023.0      40171.0
+4h_rule           22018.0      32437.0
+2h {'capex_usd_per_mw': 396000, 'om_usd_per_mw_yr': 7920, 'arbitrage_rev_last12': 28411.505540142018, 'arbitrage_rev_2y_avg': 24993.0, 'simple_payback_yrs': 19.3, 'cum_cash_yr15_undiscounted': -143418, 'npv_arbitrage_only': -261339, 'extra_revenue_needed_usd_per_mw_yr': 34359, 'breakeven_capex_usd_per_kwh_arbitrage_only': 76.9}
+4h {'capex_usd_per_mw': 660000, 'om_usd_per_mw_yr': 13200, 'arbitrage_rev_last12': 47160.339941043945, 'arbitrage_rev_2y_avg': 41428.0, 'simple_payback_yrs': 19.4, 'cum_cash_yr15_undiscounted': -241542, 'npv_arbitrage_only': -436883, 'extra_revenue_needed_usd_per_mw_yr': 57439, 'breakeven_capex_usd_per_kwh_arbitrage_only': 63.8}
+OK
