@@ -1,0 +1,6 @@
+metric,value
+q10_q90_raw,0.647
+q10_q90_calibrated,0.791
+band_width_raw,18.54
+band_width_cal,27.34
+test_hours,17424.0

@@ -1,0 +1,562 @@
+<meta name="dash-one-writer">
+<style>
+#dash-root .v { font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+#dash-root .v-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0 0 var(--cds-gap-xs); }
+#dash-root .v-lede { color: var(--color-fg-muted); margin: 0 0 var(--cds-gap-md); max-width: 62rem; }
+#dash-root .v-tabs { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); margin: 0 0 var(--cds-gap-lg); }
+#dash-root .v-tab { background: none; border: 0; border-bottom: 2px solid transparent; padding: var(--cds-pad-sm) var(--cds-pad-md); font: inherit; color: var(--color-fg-muted); cursor: pointer; }
+#dash-root .v-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); }
+#dash-root .v-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); margin-bottom: var(--cds-gap-md); }
+#dash-root .v-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+#dash-root .v-card h3 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+#dash-root .v-card h2, #dash-root .v-sec { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: var(--cds-gap-lg) 0 var(--cds-gap-sm); }
+#dash-root .v-note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: 0 0 var(--cds-gap-sm); }
+#dash-root .v-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--cds-gap-md); margin-bottom: var(--cds-gap-md); }
+#dash-root .v-tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); }
+#dash-root .v-tile .lab { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+#dash-root .v-tile .num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; margin: var(--cds-gap-xs) 0; }
+#dash-root .v-tile .sub { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+#dash-root .v-chart { position: relative; min-height: 280px; }
+#dash-root .v-chart.short { min-height: 240px; }
+#dash-root .v-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+#dash-root .v-tip .t { color: var(--cds-text-secondary); }
+#dash-root .v-sw { display: inline-block; width: .6rem; height: .6rem; border-radius: 2px; margin-right: .35rem; }
+#dash-root .v-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: var(--cds-gap-xs); }
+#dash-root .v-tablebox { overflow: auto; max-height: 30rem; }
+#dash-root table.v-t { border-collapse: collapse; width: 100%; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+#dash-root table.v-t th { text-align: right; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); position: sticky; top: 0; background: var(--color-panel); }
+#dash-root table.v-t td { text-align: right; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+#dash-root table.v-t th:first-child, #dash-root table.v-t td:first-child { text-align: left; }
+#dash-root table.v-t tr.sel td { background: color-mix(in srgb, var(--color-fg) 7%, transparent); font-weight: var(--cds-font-weight-medium); }
+#dash-root .v-find { margin: 0 0 var(--cds-gap-sm); line-height: 1.55; max-width: 62rem; }
+#dash-root .v-find b { font-variant-numeric: tabular-nums; }
+#dash-root .v-ctrl { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); margin: 0 0 var(--cds-gap-md); align-items: end; }
+#dash-root .v-ctrl label { display: flex; flex-direction: column; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .v-ctrl select { font: inherit; color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); }
+#dash-root .v-prose { max-width: 62rem; line-height: 1.6; }
+#dash-root .v-prose li { margin-bottom: var(--cds-gap-xs); }
+#dash-root .v-prose a { color: inherit; }
+#dash-root [data-dash-source-state="refreshing"] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+#dash-root [data-dash-source-state="empty"] { color: transparent; }
+#dash-root svg text { font-family: var(--font-anthropic-sans); }
+</style>
+
+<div class="v">
+  <h1 class="v-title">Türkiye VPP ve PTF simülasyonu</h1>
+  <p class="v-lede">EPİAŞ Şeffaflık Platformu'ndan doğrudan çekilen 2016 – 28 Ekim 2026 saatlik veriyle (PTF, SMF, sistem yönü, kaynak bazlı üretim, tüketim) kurulan dört parçalı çalışma: gün öncesi fiyat tahmini, toplayıcı portföy simülasyonu, batarya arbitrajı ve 2035 senaryoları. Fiyatlar USD/MWh; TL enflasyonu modelin öğrendiği şey olmasın diye.</p>
+
+  <div class="v-tabs" role="tablist">
+    <button class="v-tab" role="tab" data-tab="ozet" aria-selected="true">Özet</button>
+    <button class="v-tab" role="tab" data-tab="piyasa" aria-selected="false">Piyasa 2019–2026</button>
+    <button class="v-tab" role="tab" data-tab="model" aria-selected="false">PTF tahmin modeli</button>
+    <button class="v-tab" role="tab" data-tab="toplayici" aria-selected="false">Toplayıcı portföy</button>
+    <button class="v-tab" role="tab" data-tab="batarya" aria-selected="false">Batarya</button>
+    <button class="v-tab" role="tab" data-tab="s2035" aria-selected="false">2035 senaryoları</button>
+    <button class="v-tab" role="tab" data-tab="yontem" aria-selected="false">Yöntem ve sınırlar</button>
+  </div>
+
+  <!-- ÖZET -->
+  <section id="ozet" data-page="ozet">
+    <div class="v-tiles">
+      <div class="v-tile"><div class="lab">Tahmin hatası, naif yönteme göre</div>
+        <div class="num"><span data-draw="t_model" data-source="c_model" data-field="improvement">—</span></div>
+        <div class="sub">daha düşük MAE · 2 yıllık dürüst geriye dönük test</div></div>
+      <div class="v-tile"><div class="lab">Toplayıcıyla dengesizlik hacmi</div>
+        <div class="num"><span data-draw="t_agg" data-source="aggregator" data-field="reduction" data-where="key=sens_baz_40">—</span></div>
+        <div class="sub">azalma · 40 küçük GES, 7 bölge (duyarlılık aralığı geniş)</div></div>
+      <div class="v-tile"><div class="lab">2 saatlik batarya, yalnız arbitraj</div>
+        <div class="num"><span data-draw="t_bat" data-source="battery_econ" data-field="simple_payback_yrs" data-where="duration=2h">—</span></div>
+        <div class="sub">yıl basit geri ödeme · 15 yıllık ömrü aşıyor</div></div>
+      <div class="v-tile"><div class="lab">2035 GES yakalama oranı</div>
+        <div class="num"><span data-draw="t_cap" data-source="scenarios" data-field="solar_capture_ratio" data-where="key=baz|hedef_120|uep_7.5GW_2s">—</span></div>
+        <div class="sub">120 GW hedefi + UEP talebi + 7.5 GW batarya (2025: ~0.83)</div></div>
+    </div>
+
+    <h2 class="v-sec">Bulgular</h2>
+    <p class="v-find"><b>1. Güneş fiyatını kendisi düşürüyor.</b> Öğle saati (12:00) fiyatı yıllık ortalamanın 2016'da <b data-draw="f_mid16" data-source="annual" data-field="midday_ratio" data-where="year=2016">—</b> katıydı (öğle o zaman zirveydi), 2019'da <b data-draw="f_mid19" data-source="annual" data-field="midday_ratio" data-where="year=2019">—</b>, 2026'da <b data-draw="f_mid26" data-source="annual" data-field="midday_ratio" data-where="year=2026">—</b> katına indi; sıfır fiyatlı saat sayısı 2025'te <b data-draw="f_z25" data-source="annual" data-field="zero_hours" data-where="year=2025">—</b>, 2026'da 28 Ekim'e kadar <b data-draw="f_z26" data-source="annual" data-field="zero_hours" data-where="year=2026">—</b>. Lisanslı GES'in kazandığı ortalama fiyatın piyasa ortalamasına oranı 2019'da <b data-draw="f_c19" data-source="annual" data-field="solar_capture_licensed" data-where="year=2019">—</b>, 2024'te <b data-draw="f_c24" data-source="annual" data-field="solar_capture_licensed" data-where="year=2024">—</b>, 2026'da <b data-draw="f_c26" data-source="annual" data-field="solar_capture_licensed" data-where="year=2026">—</b>.</p>
+    <p class="v-find"><b>2. Fiyat tahmini yapılabilir, ama sınırı belli.</b> Yalnız fiyat geçmişi, TEİAŞ yük tahmini ve takvimle kurulan model 2 yıllık testte saatlik ortalama <b data-draw="f_mae" data-source="model_metrics" data-field="mae" data-where="key=ensemble">—</b> $/MWh hata yaptı (naif yöntem <b data-draw="f_maen" data-source="model_metrics" data-field="mae" data-where="key=naive_D">—</b>). Bu, hava tahmini de kullanan bağımsız açık model Puant ile aynı seviye (<b data-draw="f_maep" data-source="model_metrics" data-field="mae" data-where="key=puant_ext">—</b>). EPİAŞ'tan çekilen baraj/akarsu üretimi, gaz payı ve dengeleme piyasası girdileri (dünün değerleriyle) modeli iyileştirmedi (<b data-draw="f_maev2" data-source="model_metrics" data-field="mae" data-where="key=ensemble_v2">—</b>): son günlerin fiyatı hidrolojiyi zaten taşıyor. Sonraki adım gün öncesi rüzgâr/güneş/sıcaklık tahmini.</p>
+    <p class="v-find"><b>3. Dengesizlik pahalılaştı.</b> Gerçek SMF ve sistem yönüyle hesaplanan dengesizlik bedeli, fazla üretimde PTF'nin 2025'te <b data-draw="f_up25" data-source="imbalance_annual" data-field="up_cost_pct" data-where="year=2025">—</b>'i, 2026'da (yeni formülle) <b data-draw="f_up26" data-source="imbalance_annual" data-field="up_cost_pct" data-where="year=2026">—</b>'i; eksik üretimde 2025'te <b data-draw="f_dn25" data-source="imbalance_annual" data-field="down_cost_pct" data-where="year=2025">—</b>, 2026'da <b data-draw="f_dn26" data-source="imbalance_annual" data-field="down_cost_pct" data-where="year=2026">—</b>. Tahmin hatasının maliyeti iki katına yaklaştı; bu, toplayıcıya ve iyi tahmine olan talebi artırıyor.</p>
+    <p class="v-find"><b>4. Toplayıcılığın değeri çeşitlilikte.</b> 40 dağınık GES'i tek portföyde toplamak, baz varsayımlarla dengesizlik hacmini <b data-draw="f_agg" data-source="aggregator" data-field="reduction" data-where="key=sens_baz_40">—</b> azaltıyor (yerel bulut sapmalarının şiddetine göre <b data-draw="f_aglo" data-source="aggregator" data-field="reduction" data-where="key=sens_düşük_40">—</b> ile <b data-draw="f_aghi" data-source="aggregator" data-field="reduction" data-where="key=sens_yüksek_40">—</b> arası); ama aynı 40 tesis tek bölgedeyse azalma yalnız <b data-draw="f_agg1" data-source="aggregator" data-field="reduction" data-where="key=one_region_40">—</b>. 20 tesisten sonra kazanç doyuyor: kalan hata ülke çapındaki hava tahmini hatası, onu ancak daha iyi tahmin azaltır. Gerçek dengesizlik fiyatlarıyla kazanç üretim başına <b data-draw="f_agsave" data-source="aggregator" data-field="real_saving" data-where="key=sens_baz_40">—</b> $/MWh, yani gelirin <b data-draw="f_agpct" data-source="aggregator" data-field="real_saving_pct_revenue" data-where="key=sens_baz_40">—</b>'i.</p>
+    <p class="v-find"><b>5. Batarya bugün tek başına arbitrajla dönmüyor.</b> Bizim tahminle planlanan 2 saatlik batarya, mükemmel öngörünün <b data-draw="f_bshare" data-source="battery" data-field="share_of_perfect" data-where="key=2h_model">—</b> kadarını kazandı (son 12 ayda MW başına <b data-draw="f_brev" data-source="battery" data-field="p2" data-where="key=2h_model">—</b>/yıl). Başabaş için yan hizmet/kapasite gibi ek gelir gerekiyor: MW başına yılda <b data-draw="f_bextra" data-source="battery_econ" data-field="extra_revenue_needed_usd_per_mw_yr" data-where="duration=2h">—</b>.</p>
+    <p class="v-find"><b>6. 2035 hedefleri tutarsa asıl sorun fiyat değil, esneklik.</b> 120 GW rüzgâr+güneş ve UEP talebiyle (510 TWh) model, depolama 7.5 GW'ta kalırsa yılda <b data-draw="f_z35" data-source="scenarios" data-field="zero_price_hours" data-where="key=baz|hedef_120|uep_7.5GW_2s">—</b> sıfır fiyatlı saat ve <b data-draw="f_cur35" data-source="scenarios" data-field="curtail_twh" data-where="key=baz|hedef_120|uep_7.5GW_2s">—</b> TWh kısıntı öngörüyor. 20 GW / 4 saat depolamayla kısıntı <b data-draw="f_cur35h" data-source="scenarios" data-field="curtail_twh" data-where="key=baz|hedef_120|yuksek_20GW_4s">—</b> TWh'e iniyor. Toplayıcılar ve bataryalar için iş fırsatı tam burada.</p>
+    <p class="v-note">Her sayının üzerine gelip kaynağını Sources panelinden görebilirsiniz. Model varsayımları ve doğrulama adımları "Yöntem ve sınırlar" sekmesinde.</p>
+  </section>
+
+  <!-- PİYASA -->
+  <section id="piyasa" data-page="piyasa" hidden>
+    <div class="v-grid">
+      <div class="v-card"><h3>Aylık ortalama PTF ve SMF</h3><p class="v-note">USD/MWh, 2016-01 – 2026-10. 2022 enerji krizi ve 2026 baharındaki rekor hidro üretim (Nisan'da üretimin %41'i) belirgin.</p>
+        <div class="v-chart" data-draw="ch_monthly" data-source="monthly"></div>
+        <div class="v-legend"><span><span class="v-sw" data-draw="sw_ptf">—</span>PTF</span><span><span class="v-sw" data-draw="sw_smf">—</span>SMF</span></div></div>
+      <div class="v-card"><h3>Gün içi fiyat profili</h3><p class="v-note">Saatlik ortalama ÷ yıllık ortalama. Öğle çukuru her yıl derinleşiyor, akşam zirvesi yükseliyor.</p>
+        <div class="v-chart" data-draw="ch_hour" data-source="hour_profile"></div>
+        <div class="v-legend" data-draw="lg_hour" data-source="hour_profile"></div></div>
+    </div>
+    <div class="v-grid">
+      <div class="v-card"><h3>Lisanslı üretim karışımı</h3><p class="v-note">TWh/yıl, EPİAŞ gerçek zamanlı üretim (lisanssız güneş dahil değil; 2026: 28 Ekim'e kadar).</p>
+        <div class="v-chart" data-draw="ch_mix" data-source="gen_mix"></div>
+        <div class="v-legend" data-draw="lg_mix" data-source="gen_mix"></div></div>
+      <div class="v-card"><h3>Dengesizlik bedeli</h3><p class="v-note">PTF'ye oranla birim maliyet; çizgi: fazla üretim (pozitif), kesik: eksik üretim (negatif). 2016–2025: %3 marjlı eski formül; 2026: RG 29.12.2025 formülü (saatlik SMF ile, 15 dakikalık uçlar olmadan → alt sınır).</p>
+        <div class="v-chart" data-draw="ch_imb" data-source="imbalance_annual"></div>
+        <div class="v-legend"><span><span class="v-sw" data-draw="sw_up">—</span>Fazla üretim</span><span><span class="v-sw" data-draw="sw_dn">—</span>Eksik üretim</span></div></div>
+    </div>
+    <div class="v-card"><h3>Dengeleme piyasası, yıllık</h3><p class="v-note">Sistem yönü EPİAŞ'ın saatlik "Enerji Açığı / Fazlası" kaydı. |SMF − PTF|: saatlik ortalama mutlak fark.</p>
+      <div class="v-tablebox"><table class="v-t" data-source="imbalance_annual" data-row-key="year">
+        <thead><tr><th data-field="year">Yıl</th><th data-field="ptf_usd">PTF $</th><th data-field="smf_usd">SMF $</th><th data-field="abs_gap_usd">|SMF − PTF| $</th><th data-field="deficit_share">Açık saat payı</th><th data-field="surplus_share">Fazla saat payı</th><th data-field="up_cost_usd">Fazla üretim bedeli $/MWh</th><th data-field="down_cost_usd">Eksik üretim bedeli $/MWh</th><th data-field="up_cost_pct">Fazla / PTF</th><th data-field="down_cost_pct">Eksik / PTF</th></tr></thead>
+        <tbody data-draw="tb_imb" data-source="imbalance_annual"></tbody></table></div></div>
+    <div class="v-card"><h3>Yıllık göstergeler</h3><p class="v-note">Doğrulama: "Resmi TL" EPİAŞ yıllık raporlarındaki aritmetik ortalama; "Resmi $" o değerin yıllık ortalama USD/TRY kuruna bölümü. GES yakalama oranı: GES'in ağırlıklı ortalama fiyatı ÷ basit ortalama; ışınım bazlı (2016–2025) ve lisanslı GES gerçek üretimiyle. Tüketimdeki 2021 sıçraması kısmen EPİAŞ'ın lisanssız üretimi tüketime katmaya başlamasından.</p>
+      <div class="v-tablebox"><table class="v-t" data-source="annual" data-row-key="year">
+        <thead><tr><th data-field="year">Yıl</th><th data-field="period">Dönem</th><th data-field="ptf_usd">PTF $/MWh</th><th data-field="official_usd">Resmi $/MWh</th><th data-field="ptf_tl">PTF TL</th><th data-field="official_tl">Resmi TL</th><th data-field="zero_hours">Sıfır fiyatlı saat</th><th data-field="midday_ratio">12:00 / ort.</th><th data-field="evening_ratio">19–21 / ort.</th><th data-field="spread4">En pahalı 4s − en ucuz 4s</th><th data-field="solar_capture_irradiance">GES yakalama (ışınım)</th><th data-field="solar_capture_licensed">GES yakalama (lisanslı)</th><th data-field="consumption_twh">Tüketim TWh</th></tr></thead>
+        <tbody data-draw="tb_annual" data-source="annual"></tbody></table></div></div>
+  </section>
+
+  <!-- MODEL -->
+  <section id="model" data-page="model" hidden>
+    <p class="v-find">Test: 1 Eylül 2024 – 27 Ağustos 2026, her ayın başında yalnız geçmiş veriyle yeniden eğitim. Bilgi seti, D+1 teklifinin verildiği an (D günü 12:30 öncesi) bilinenlerle sınırlı: D gününün fiyatları, D+1 için TEİAŞ yük tahmini, D gününe kadar KGÜP. Hava verisi bilerek kullanılmadı (elimizdeki gerçekleşen hava o anda bilinemezdi).</p>
+    <div class="v-grid">
+      <div class="v-card"><h3>Ortalama mutlak hata (MAE)</h3><p class="v-note">USD/MWh, aynı 17.400+ saat. Düşük daha iyi.</p>
+        <div class="v-chart" data-draw="ch_mae" data-source="model_metrics"></div></div>
+      <div class="v-card"><h3>Son iki hafta: tahmin ve gerçekleşen</h3><p class="v-note">14–27 Ağustos 2026. Gölge: kalibre edilmiş %80 aralık.</p>
+        <div class="v-chart" data-draw="ch_fc" data-source="forecast_sample"></div>
+        <div class="v-legend"><span><span class="v-sw" data-draw="sw_a">—</span>Gerçekleşen</span><span><span class="v-sw" data-draw="sw_f">—</span>Tahmin (topluluk)</span><span><span class="v-sw" data-draw="sw_n">—</span>Naif</span></div></div>
+    </div>
+    <div class="v-grid">
+      <div class="v-card"><h3>Saate göre hata</h3><p class="v-note">MAE, USD/MWh. Akşam ve sabah geçiş saatleri en zor.</p>
+        <div class="v-chart short" data-draw="ch_maeh" data-source="mae_hour"></div></div>
+      <div class="v-card"><h3>Modeli en çok ne etkiliyor</h3><p class="v-note">LightGBM kazanç payı, 24 aylık modellerin ortalaması.</p>
+        <div class="v-chart short" data-draw="ch_fi" data-source="feature_importance"></div></div>
+    </div>
+    <div class="v-card"><h3>Tüm modeller</h3><p class="v-note">rMAE = MAE ÷ naif MAE. TL karşılığı her saatin kuruyla. %80 aralığın ham kapsaması <span data-draw="b_raw" data-source="model_band" data-field="value" data-where="metric=q10_q90_raw">—</span>; geçmiş 3 ayın hatasıyla genişletilince <span data-draw="b_cal" data-source="model_band" data-field="value" data-where="metric=q10_q90_calibrated">—</span>.</p>
+      <div class="v-tablebox"><table class="v-t" data-source="model_metrics" data-row-key="key">
+        <thead><tr><th data-field="model">Model</th><th data-field="mae">MAE $</th><th data-field="rmse">RMSE $</th><th data-field="smape">sMAPE %</th><th data-field="rmae">rMAE</th><th data-field="mae_tl">MAE TL</th><th data-field="mae_p1">MAE Eyl24–Ağu25</th><th data-field="mae_p2">MAE Eyl25–Ağu26</th></tr></thead>
+        <tbody data-draw="tb_model" data-source="model_metrics"></tbody></table></div></div>
+  </section>
+
+  <!-- TOPLAYICI -->
+  <section id="toplayici" data-page="toplayici" hidden>
+    <p class="v-find">Ülke çapındaki gün öncesi GES tahmin hatası gerçek veriden (lisanslı GES üretimi ile bağımsız bir tahmin, 2024-07 – 2026-08): gündüz saatlerinde kapasitenin <b data-draw="a_nat" data-source="aggregator_meta" data-field="value" data-where="metric=national_daylight_nMAE">—</b>'i. Bunun üzerine bölgesel ve tesise özgü bulut sapmaları eklendi; her tesis 1 MW ve ülke profiline göre tahmin yapıyor. Tek başına her tesis kendi dengesizliğini öder; toplayıcıda yalnız portföyün net sapması ödenir.</p>
+    <div class="v-grid">
+      <div class="v-card"><h3>Dengesizlik hacmi / üretim</h3><p class="v-note">Tesis sayısına göre; tek başına (her tesis ayrı) ve toplayıcı (portföy).</p>
+        <div class="v-chart" data-draw="ch_agg" data-source="aggregator"></div>
+        <div class="v-legend"><span><span class="v-sw" data-draw="sw_s">—</span>Tek başına</span><span><span class="v-sw" data-draw="sw_p">—</span>Toplayıcı portföyü</span></div></div>
+      <div class="v-card"><h3>Ne kadar para?</h3><p class="v-note">Gerçek saatlik dengesizlik fiyatlarıyla (EPİAŞ SMF, PTF ve sistem yönü; 2026'dan itibaren yeni formül), 2024-07 – 2026-08. $/MWh üretim. Tasarruf ÷ gelir: tasarrufun GES'in PTF gelirine oranı.</p>
+        <div class="v-tablebox"><table class="v-t" data-source="aggregator" data-row-key="key">
+          <thead><tr><th data-field="case_label">Durum</th><th data-field="n_sites">Tesis</th><th data-field="site_daylight_nMAE">Tek tesis hatası</th><th data-field="reduction">Azalma</th><th data-field="real_cost_standalone">Tek başına $</th><th data-field="real_cost_pooled">Toplayıcı $</th><th data-field="real_saving">Tasarruf $</th><th data-field="real_saving_pct_revenue">Tasarruf ÷ gelir</th><th data-field="real_cost_standalone_2026">Tek başına 2026 $</th><th data-field="real_cost_pooled_2026">Toplayıcı 2026 $</th></tr></thead>
+          <tbody data-draw="tb_agg" data-source="aggregator"></tbody></table></div></div>
+    </div>
+    <p class="v-note">Azalma oranı ölçülmüş değil, simülasyon sonucu: ülke çapındaki hata gerçek ve havuzlanarak yok edilemez; azalan kısım varsayılan bölgesel/yerel sapmalardır. Monte Carlo gürültüsü ±1 puan (40→80 tesisteki küçük düşüş gürültü). Yorum: gerçek fiyatlarla tasarruf baz varsayımda ~0.8 $/MWh (gelirin ~%1.6'sı), duyarlılıkta 0.4–1.3 $/MWh; tek bölgede 0.24. Tek başına iş modeli olmaz, gelirin bir parçasıdır. Diğer parçalar: 10 yıllık alım garantisi biten lisanssız santrallerin piyasaya erişimi, talep tarafı katılımı ve yeni yan hizmet ödemeleri (aylık kapasite + aktivasyon bedeli, RG 19.10.2026), batarya arbitrajı.</p>
+  </section>
+
+  <!-- BATARYA -->
+  <section id="batarya" data-page="batarya" hidden>
+    <p class="v-find">Her gün için doğrusal program: 1 MW batarya, %88 verim, günde en fazla bir tam döngü, 4 $/MWh aşınma maliyeti. Stratejiler aynı günü farklı fiyat bilgisiyle planlıyor ve hepsi <b>gerçekleşen</b> fiyatla uzlaştırılıyor. Dönem: Eyl 2024 – Ağu 2026.</p>
+    <div class="v-grid">
+      <div class="v-card"><h3>Yıllık arbitraj geliri</h3><p class="v-note">USD / MW / yıl, iki yıl ortalaması.</p>
+        <div class="v-chart" data-draw="ch_bat" data-source="battery"></div>
+        <div class="v-legend"><span><span class="v-sw" data-draw="sw_2h">—</span>2 saat</span><span><span class="v-sw" data-draw="sw_4h">—</span>4 saat</span></div></div>
+      <div class="v-card"><h3>Stratejiler</h3><p class="v-note">Gelir artıyor: öğle–akşam farkı genişliyor.</p>
+        <div class="v-tablebox"><table class="v-t" data-source="battery" data-row-key="key">
+          <thead><tr><th data-field="strategy">Strateji</th><th data-field="duration">Süre</th><th data-field="usd_per_mw_year">$/MW/yıl</th><th data-field="share_of_perfect">Mükemmelin payı</th><th data-field="p1">Eyl24–Ağu25</th><th data-field="p2">Eyl25–Ağu26</th></tr></thead>
+          <tbody data-draw="tb_bat" data-source="battery"></tbody></table></div></div>
+    </div>
+    <div class="v-card"><h3>Yatırım ekonomisi</h3><p class="v-note">Capex varsayımı: 2 saat 180 $/kWh, 4 saat 150 $/kWh (+%10 bağlantı); BNEF Aralık 2025 anketinde Avrupa ortalaması 177 $/kWh, küresel 117 $/kWh. Bakım capex'in %2'si/yıl, yıllık %2 bozulma, 15 yıl, %10 USD iskonto. Gelir: son 12 ayın arbitrajı (365 güne ölçekli). "Basit geri ödeme" yıllık bozulmayı yok sayar; bozulmayla 15. yıl sonunda bile kümülatif nakit negatif. Not: 4 $/MWh aşınma maliyeti gelirden zaten düşülmüş, %2 bozulma üstüne eklendi; tahmin biraz muhafazakâr.</p>
+      <div class="v-tablebox"><table class="v-t" data-source="battery_econ" data-row-key="duration">
+        <thead><tr><th data-field="duration">Süre</th><th data-field="capex_usd_per_mw">Capex $/MW</th><th data-field="arbitrage_rev_last12">Arbitraj $/MW/yıl</th><th data-field="simple_payback_yrs">Basit geri ödeme (yıl)</th><th data-field="cum_cash_yr15_undiscounted">15. yıl kümülatif nakit $/MW</th><th data-field="npv_arbitrage_only">NBD $/MW</th><th data-field="extra_revenue_needed_usd_per_mw_yr">Başabaş için ek gelir $/MW/yıl</th><th data-field="breakeven_capex_usd_per_kwh_arbitrage_only">Yalnız arbitrajla başabaş capex $/kWh</th></tr></thead>
+        <tbody data-draw="tb_econ" data-source="battery_econ"></tbody></table></div></div>
+  </section>
+
+  <!-- 2035 -->
+  <section id="s2035" data-page="s2035" hidden>
+    <p class="v-find">Saatlik maliyet bazlı piyasa modeli: her gün için merit-order + baraj suyu + depolama + ticaret optimizasyonu, fiyat = marjinal maliyet. 2025'e kalibre edildi (ortalama fiyat hatası &lt;1 $/MWh, üretim karışımı SHURA 2025 paylarına yakın). 2025 hava yılının saatlik şekilleri kullanıldı. Talep: 2025 = 352.5 TWh (TEİAŞ brüt tüketim).</p>
+    <div class="v-ctrl">
+      <label>Talep 2035<select class="v-sel" data-k="dem"><option value="dusuk">Düşük (%2.5/yıl, 451 TWh)</option><option value="baz" selected>Baz — UEP (510 TWh)</option><option value="yuksek">Yüksek (%4.7/yıl, 560 TWh)</option></select></label>
+      <label>Rüzgâr + güneş<select class="v-sel" data-k="sup"><option value="uep2022">UEP 2022 (53 GW güneş + 30 GW rüzgâr)</option><option value="mevcut_hiz">Mevcut hız (70 + 25 GW)</option><option value="hedef_120" selected>120 GW hedefi (80 + 40 GW)</option></select></label>
+      <label>Depolama<select class="v-sel" data-k="sto"><option value="yok">Yok</option><option value="uep_7.5GW_2s" selected>7.5 GW / 2 saat (UEP)</option><option value="yuksek_20GW_4s">20 GW / 4 saat</option></select></label>
+    </div>
+    <div class="v-grid">
+      <div class="v-card"><h3>Seçili senaryoda gün içi fiyat</h3><p class="v-note">Saatlik ortalama, USD/MWh; 2025 gerçekleşen ve modelin 2025'i ile.</p>
+        <div class="v-chart" data-draw="ch_s35" data-source="scenario_hours"></div>
+        <div class="v-legend"><span><span class="v-sw" data-draw="sw_sel">—</span>Seçili 2035 senaryosu</span><span><span class="v-sw" data-draw="sw_act">—</span>2025 gerçekleşen</span><span><span class="v-sw" data-draw="sw_mod">—</span>2025 model</span></div></div>
+      <div class="v-card"><h3>Seçili talepte GES yakalama oranı</h3><p class="v-note">Arz (satır) × depolama (sütun). 1'in altı: GES piyasa ortalamasından ucuza satıyor.</p>
+        <div class="v-chart short" data-draw="ch_heat" data-source="scenarios"></div></div>
+    </div>
+    <div class="v-card"><h3>Tüm senaryolar</h3><p class="v-note">Seçili satır vurgulu. Duyarlılık: kurak/yağışlı hidroloji ve karbon fiyatı (120 GW + baz talep + 7.5 GW batarya). Maliyet bazlı model 2025'te gün içi farkı yarı yarıya düşük, GES yakalama oranını ~0.05–0.08 yüksek gösterdi; 2035'te GES'in fiyatı kendi düşürmesi gerçekte daha sert olabilir. "Karşılanamayan" sütunu yüksek talepte esneklik açığının işareti (2025 modelinde de kıtlık saatlerinde küçük bir miktar çıkıyor).</p>
+      <div class="v-tablebox"><table class="v-t" data-source="scenarios" data-row-key="key">
+        <thead><tr><th data-field="demand">Talep</th><th data-field="supply">Rüzgâr+güneş</th><th data-field="storage">Depolama</th><th data-field="variant">Varyant</th><th data-field="avg_price">Ort. fiyat $</th><th data-field="solar_capture_ratio">GES yakalama</th><th data-field="wind_capture_ratio">RES yakalama</th><th data-field="zero_price_hours">Sıfır fiyatlı saat</th><th data-field="curtail_twh">Kısıntı TWh</th><th data-field="curtail_share_vre">Kısıntı payı</th><th data-field="vre_share">RES+GES / talep</th><th data-field="gas_twh">Gaz TWh</th><th data-field="spread4">4s fark $</th><th data-field="unserved_gwh">Karşılanamayan GWh</th></tr></thead>
+        <tbody data-draw="tb_scen" data-source="scenarios"></tbody></table></div></div>
+  </section>
+
+  <!-- YÖNTEM -->
+  <section id="yontem" data-page="yontem" hidden>
+    <div class="v-prose">
+      <h2 class="v-sec">Veri ve doğrulama</h2>
+      <ul>
+        <li><b>EPİAŞ Şeffaflık Platformu (doğrudan, 2016-01 – 2026-10-28, saatlik):</b> PTF (TL/USD/EUR), SMF, sistem yönü, kaynak bazlı gerçek zamanlı üretim (lisanslı), gerçek zamanlı tüketim. Baraj doluluk geçmişi API'de yalnız güncel gün döndüğü için kullanılmadı; hidroloji için baraj + akarsu üretimi kullanıldı.</li>
+        <li><b>Yük tahmini, KGÜP (2019–2026-08):</b> EPİAŞ verisi, açık kaynaklı bir araştırma deposundan (beratkrts/electricity-price-forecasting-turkish-day-ahead-market); PTF'si EPİAŞ'tan çektiğimizle saat saat aynı.</li>
+        <li><b>Tüketim 2016–2025 + nüfus ağırlıklı hava:</b> ahalikoguz/turkiye-electricity-demand-forecasting (EPİAŞ gerçek zamanlı tüketim).</li>
+        <li><b>TL fiyat, rüzgâr, lisanslı GES, tüketim (2024-07 – 2026-10):</b> emrtunali/puant açık modelinin geriye dönük test dosyası.</li>
+        <li><b>Kontroller:</b> EPİAŞ yıllık TL ortalamaları 2019–2024 raporlarla birebir; iki tüketim kaynağı arasında korelasyon 0.9999; 2025 TL ortalaması 2,619.8 (resmi 2,617.8); 2026 Ocak–Haziran aylık TL ortalamaları yayımlanan değerlerle birebir; yıllık USD ortalamaları resmi TL ÷ kur değerleriyle ±%3 içinde (sapma yıllık ortalama kur kullanımından); EPİAŞ günlük ağırlıklı ortalamayla 85 günde ort. %2.2 fark (beklenen: hacim ağırlığı); 2025 tüketimi 352.5 TWh = TEİAŞ brüt tüketim.</li>
+      </ul>
+      <h2 class="v-sec">Modeller</h2>
+      <ul>
+        <li><b>PTF tahmini:</b> LightGBM (mutlak ve 7 günlük ortalamaya göre göreli hedef, medyan ve %10/%90 kantilleri), saat bazlı Ridge ve topluluk ortalaması. Yakın geçmiş daha ağırlıklı (yarı ömür 1 yıl). Kantil aralığı her ay geçmiş 3 ayın kapsamasına göre genişletildi.</li>
+        <li><b>Toplayıcı:</b> ulusal hata gerçek; bölgesel (7 bölge) ve yerel sapmalar AR(1), ρ = 0.9. Baz: tek tesis gündüz hatası kapasitenin ~%10'u; duyarlılık %7.6–12.6.</li>
+        <li><b>Batarya:</b> günlük LP (HiGHS), SoC gün başı = gün sonu = 0. Fiyat eşitliklerinde çözücüye bağlı sonuç olmasın diye küçük deterministik eşitlik bozucu eklendi (naif strateji sonucu ±%1 duyarlı).</li>
+        <li><b>2035:</b> 2025 üretim karışımına (EPİAŞ: ithal kömür 76.1, yerli kömür 45.3, gaz 78.4, hidro 57.2 TWh) kalibre; model ithal kömürü birebir, yerli kömürü +6, gazı −11 TWh tutturuyor. Hidro aylık dağılımı EPİAŞ 2016–2025 ortalaması. Günlük LP; termik kapasite 5'er basamaklı arz eğrisi (linyit, ithal kömür 105 $/t, kombine çevrim ve eski gaz; BOTAŞ santral tarifesi ≈ 35.6 $/MWh-termal), akarsu santralleri ve minimum yükler zorunlu çalışır, baraj suyu günlük bütçeyle en pahalı saatlere kaydırılır, ihracat 6.8 GW / ithalat 6.6 GW, fiyat tavanı 100 $/MWh (yalnız raporlanan fiyata), taban 0; yük atma maliyeti 3000 $/MWh. GES/RES yakalama oranı kısıntı sonrası sevk edilen üretimle ağırlıklı. Kapasiteler: UEP 2022 (ETKB), 120 GW hedefi (ETKB), rüzgâr ~40 GW (EPDK, Şubat 2026) → güneş ~80 GW. Nükleer 4.8 GW (Akkuyu; UEP 7.2 GW öngörüyor).</li>
+      </ul>
+      <h2 class="v-sec">Bilinen sınırlar</h2>
+      <ul>
+        <li>Fiyat modeli rüzgâr/güneş/hava tahmini kullanmıyor; hidroloji (baraj doluluğu) yok. 2026 baharındaki rekor hidro üretimi bu yüzden kısmen yakalanamadı.</li>
+        <li>Maliyet bazlı 2035 modeli birim taahhüdü, rampa kısıtı ve stratejik teklif içermiyor: 2025'te gün içi 4 saatlik farkı 18 $ (gerçek 40 $), GES yakalamayı 0.92 (gerçek 0.83–0.87) gösterdi. Ayrıca gerçek veriyle eğitilen ampirik bir fiyat-şekil modeli 2026'yı dış örneklemde test edildi: yönü doğru (0.80 vs 0.71) ama sıfır fiyatlı saatleri ciddi eksik tahmin etti.</li>
+        <li>UEP'teki 5 GW elektrolizör ve 1.7 GW talep tarafı katılımı, akıllı EV şarjı modellenmedi: bunlar 2035 kısıntısını azaltır.</li>
+        <li>Dengesizlik bedeli saatlik SMF ile hesaplandı; 2026 kuralı 15 dakikalık SMF uçlarını kullandığından gerçek maliyet biraz daha yüksek olabilir. 2026 k/l katsayıları (%3/%6) resmi Kurul kararıyla doğrulanamadı. Batarya geliri yalnız gün öncesi arbitrajı; yan hizmet ve kapasite gelirleri dahil değil.</li>
+        <li>Toplayıcıdaki bölgesel/yerel hata parametreleri varsayım; ulusal hata gerçek veriden. 2024 ve 2026 yıllık göstergeleri kısmi yıl (mevsim etkisi); lisanslı GES verisi toplam GES'in küçük bir kısmı.</li><li>Bağımsız kontrol: veri, sızıntı testi (D+1 sonrası tüm veriler bozulduğunda hiçbir girdi değişmedi), batarya LP'si (ayrı formülasyonla 3 gün yeniden çözüldü), saatlik enerji dengesi (1e-11 MW içinde kapanıyor) ve yatırım aritmetiği ayrı bir gözden geçirmede doğrulandı; bulunan hatalar düzeltildi.</li>
+      </ul>
+      <h2 class="v-sec">Sonraki adımlar</h2>
+      <ul>
+        <li>15 dakikalık SMF ve DGP talimat verisiyle dengesizlik maliyetini kesinleştirmek.</li>
+        <li>Fiyat modeline gün öncesi rüzgâr/güneş/sıcaklık tahmini (Open-Meteo geçmiş tahmin arşivi) eklemek.</li>
+        <li>Toplayıcı için gerçek tesis verisiyle (birkaç lisanssız GES'in saatlik sayaç verisi) yerel hata parametrelerini kalibre etmek.</li>
+        <li>2035 modeline rampa ve minimum çalışma süreleri, elektrolizör ve talep esnekliği eklemek.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  const C = window.V = window.V || {};
+  C.sel = { dem: 'baz', sup: 'hedef_120', sto: 'uep_7.5GW_2s' };
+  C.num = (v) => (v === null || v === undefined || v === '' ? null : Number(v));
+  C.pct0 = d3.format('.0%'); C.pct1 = d3.format('.1%'); C.f1 = d3.format(',.1f'); C.f2 = d3.format(',.2f'); C.f3 = d3.format('.3f');
+  C.int = d3.format(',.0f'); C.usd = (v) => (v < 0 ? '−$' : '$') + d3.format(',.0f')(Math.abs(v));
+  C.rows = (id) => { const d = dash.data(id); return d.status === 'ok' ? d.data : null; };
+  C.css = (name) => getComputedStyle(document.getElementById('dash-root')).getPropertyValue(name).trim();
+  C.tip = (el) => { let t = el.querySelector(':scope > .v-tip'); if (!t) { t = document.createElement('div'); t.className = 'v-tip'; t.hidden = true; el.appendChild(t); } return t; };
+  C.showTip = (el, tip, x, y, head, lines) => {
+    tip.replaceChildren();
+    const h = document.createElement('div'); h.className = 't'; h.textContent = head; tip.appendChild(h);
+    for (const [color, name, val] of lines) {
+      const r = document.createElement('div');
+      if (color) { const s = document.createElement('span'); s.className = 'v-sw'; s.style.background = color; r.appendChild(s); }
+      r.appendChild(document.createTextNode(name ? name + ': ' + val : val)); tip.appendChild(r);
+    }
+    tip.hidden = false;
+    const W = el.clientWidth, tw = tip.offsetWidth, th = tip.offsetHeight;
+    tip.style.left = Math.max(0, Math.min(W - tw, x + 12)) + 'px'; tip.style.top = Math.max(0, y - th - 8) + 'px';
+  };
+  C.axisStyle = (g) => { g.attr('font-size', null).attr('font-family', null); g.selectAll('text').style('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)'); g.selectAll('.domain').style('stroke', 'var(--cds-chart-axis)'); g.selectAll('.tick line').style('stroke', 'var(--cds-chart-grid)'); };
+  C.measure = (svg, texts) => { const t = svg.append('text').style('font-size', 'var(--cds-font-size-caption)'); let w = 0; for (const s of texts) { t.text(s); w = Math.max(w, t.node().getComputedTextLength()); } t.remove(); return w; };
+
+  // genel çizgi grafiği: series = [{name, color, width, dash, pts:[{x,y}]}], xKind 'num'|'time'
+  C.lines = (el, series, o) => {
+    el.replaceChildren();
+    const W = Math.max(280, el.clientWidth), H = o.height || 280;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`);
+    const all = series.flatMap((s) => s.pts).concat(o.band ? o.band.flatMap((b) => [{ x: b.x, y: b.lo }, { x: b.x, y: b.hi }]) : []);
+    const ymax = o.ymax ?? d3.max(all, (d) => d.y), ymin = o.ymin ?? Math.min(0, d3.min(all, (d) => d.y));
+    const y = d3.scaleLinear([ymin, ymax], [H - 28, 10]).nice();
+    const yt = y.ticks(5).map(o.yFmt);
+    const ml = C.measure(svg, yt) + 10;
+    const xs = d3.extent(all, (d) => d.x);
+    const x = (o.xKind === 'time' ? d3.scaleUtc(xs, [ml, W - 10]) : d3.scaleLinear(xs, [ml, W - 10]));
+    svg.append('g').attr('transform', `translate(${ml},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(o.yFmt).tickSize(-(W - ml - 10))).call(C.axisStyle).call((g) => g.select('.domain').remove());
+    const nt = Math.max(2, Math.floor((W - ml) / 80));
+    svg.append('g').attr('transform', `translate(0,${H - 28})`).call(d3.axisBottom(x).ticks(o.xTicks ? Math.min(o.xTicks, nt) : nt).tickFormat(o.xFmt).tickSizeOuter(0)).call(C.axisStyle).call((g) => g.selectAll('.tick line').remove());
+    if (o.band) {
+      svg.append('path').datum(o.band).style('fill', o.bandColor).attr('opacity', 0.18)
+        .attr('d', d3.area().x((d) => x(d.x)).y0((d) => y(d.lo)).y1((d) => y(d.hi)));
+    }
+    for (const s of series) {
+      svg.append('path').datum(s.pts).style('fill', 'none').style('stroke', s.color).attr('stroke-width', s.width || 2)
+        .attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round').attr('stroke-dasharray', s.dash || null)
+        .attr('d', d3.line().defined((d) => d.y !== null && !isNaN(d.y)).x((d) => x(d.x)).y((d) => y(d.y)));
+    }
+    const tip = C.tip(el); const rule = svg.append('line').style('stroke', 'var(--cds-chart-reference)').attr('y1', 10).attr('y2', H - 28).style('opacity', 0);
+    const xsAll = Array.from(new Set(series[0].pts.map((d) => +d.x))).sort((a, b) => a - b);
+    svg.append('rect').attr('x', ml).attr('y', 0).attr('width', W - ml - 10).attr('height', H - 28).style('fill', 'transparent')
+      .on('pointermove', (ev) => {
+        const [mx, my] = d3.pointer(ev); const xv = +x.invert(mx);
+        const i = d3.bisectCenter(xsAll, xv); const xx = xsAll[i]; rule.attr('x1', x(xx)).attr('x2', x(xx)).style('opacity', 1);
+        const lines = series.map((s) => { const p = s.pts.find((d) => +d.x === xx); return [s.color, s.name, p && p.y !== null ? o.yFmt(p.y) : '—']; });
+        if (o.band) { const b = o.band.find((d) => +d.x === xx); if (b) lines.push([null, '%80 aralık', o.yFmt(b.lo) + ' – ' + o.yFmt(b.hi)]); }
+        const sx = el.clientWidth / W;
+        C.showTip(el, tip, x(xx) * sx, my * sx, o.tipHead(xx), lines);
+      })
+      .on('pointerleave', () => { tip.hidden = true; rule.style('opacity', 0); });
+  };
+
+  // yatay çubuk: items [{label, value, color}]
+  C.hbars = (el, items, o) => {
+    el.replaceChildren();
+    const W = Math.max(280, el.clientWidth), bh = 22, gap = 8, H = items.length * (bh + gap) + 24;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`);
+    const ml = Math.min(W * 0.48, C.measure(svg, items.map((d) => d.label)) + 12);
+    const vw = C.measure(svg, items.map((d) => o.fmt(d.value))) + 8;
+    const x = d3.scaleLinear([0, d3.max(items, (d) => d.value)], [ml, W - vw]);
+    const g = svg.selectAll('g.r').data(items).join('g').attr('transform', (d, i) => `translate(0,${i * (bh + gap) + 4})`);
+    g.append('text').attr('x', ml - 8).attr('y', bh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').style('font-size', 'var(--cds-font-size-caption)').style('fill', 'var(--color-fg)')
+      .text((d) => (C.measure(svg, [d.label]) > ml - 10 ? d.label.slice(0, Math.floor(d.label.length * (ml - 14) / C.measure(svg, [d.label]))) + '…' : d.label));
+    g.append('rect').attr('x', ml).attr('height', bh).attr('rx', 3).attr('width', (d) => Math.max(1, x(d.value) - ml)).style('fill', (d) => d.color);
+    g.append('text').attr('x', (d) => x(d.value) + 6).attr('y', bh / 2).attr('dy', '0.35em').style('font-size', 'var(--cds-font-size-caption)').style('fill', 'var(--color-fg-muted)').text((d) => o.fmt(d.value));
+  };
+
+  // tablo gövdesi
+  C.tbody = (el, rows, cols, keyCol, selKey) => {
+    el.replaceChildren();
+    for (const r of rows) {
+      const tr = document.createElement('tr'); tr.dataset.key = r[keyCol];
+      if (selKey && r[keyCol] === selKey) tr.className = 'sel';
+      for (const [c, f] of cols) { const td = document.createElement('td'); const v = r[c]; td.textContent = v === null || v === undefined || v === '' ? '—' : (f ? f(v) : v); tr.appendChild(td); }
+      el.appendChild(tr);
+    }
+  };
+  C.swatch = (name, color) => dash.draw(name, (el) => { el.textContent = ''; el.style.background = color(); });
+
+  // sekmeler
+  const show = (tab) => {
+    document.querySelectorAll('#dash-root [data-page]').forEach((s) => { s.hidden = s.dataset.page !== tab; });
+    document.querySelectorAll('#dash-root .v-tab').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === tab ? 'true' : 'false'));
+  };
+  document.querySelectorAll('#dash-root .v-tab').forEach((b) => b.addEventListener('click', () => { show(b.dataset.tab); dash.setLink(b.dataset.tab); }));
+  const named = location.hash.slice(1);
+  if (named && document.querySelector(`#dash-root [data-page="${named}"]`)) show(named);
+  document.querySelectorAll('#dash-root .v-sel').forEach((s) => s.addEventListener('change', () => { C.sel[s.dataset.k] = s.value; dash.draw('ch_s35'); dash.draw('ch_heat'); dash.draw('tb_scen'); }));
+})();
+</script>
+
+<script>
+(function () {
+  const C = window.V;
+  dash.calc('c_model', {
+    inputs: ['model_metrics'], title: 'Tahmin iyileşmesi',
+    description: 'Topluluk modelinin MAE’si naif yöntemden ne kadar düşük (1 − rMAE).',
+    fn: (model_metrics) => {
+      const e = model_metrics.find((r) => r.key === 'ensemble');
+      return [{ improvement: e ? 1 - Number(e.rmae) : null }];
+    },
+  });
+  const val = (id, field, where) => {
+    const r = C.rows(id); if (!r) return null;
+    const [k, v] = where ? where.split('=') : [null, null];
+    const row = where ? r.find((x) => String(x[k]) === v) : r[0];
+    return row ? C.num(row[field]) : null;
+  };
+  const put = (name, id, field, where, fmt) => dash.draw(name, (el) => { const v = val(id, field, where); el.textContent = v === null ? '—' : fmt(v); });
+  put('t_model', 'c_model', 'improvement', null, C.pct0);
+  put('t_agg', 'aggregator', 'reduction', 'key=sens_baz_40', C.pct0);
+  put('t_bat', 'battery_econ', 'simple_payback_yrs', 'duration=2h', C.f1);
+  put('t_cap', 'scenarios', 'solar_capture_ratio', 'key=baz|hedef_120|uep_7.5GW_2s', C.f2);
+  put('f_mid16', 'annual', 'midday_ratio', 'year=2016', C.f2);
+  put('f_mid19', 'annual', 'midday_ratio', 'year=2019', C.f2);
+  put('f_c19', 'annual', 'solar_capture_licensed', 'year=2019', C.f2);
+  put('f_up25', 'imbalance_annual', 'up_cost_pct', 'year=2025', C.pct0);
+  put('f_up26', 'imbalance_annual', 'up_cost_pct', 'year=2026', C.pct0);
+  put('f_dn25', 'imbalance_annual', 'down_cost_pct', 'year=2025', C.pct0);
+  put('f_dn26', 'imbalance_annual', 'down_cost_pct', 'year=2026', C.pct0);
+  put('f_agsave', 'aggregator', 'real_saving', 'key=sens_baz_40', C.f2);
+  put('f_agpct', 'aggregator', 'real_saving_pct_revenue', 'key=sens_baz_40', C.pct1);
+  put('f_mid26', 'annual', 'midday_ratio', 'year=2026', C.f2);
+  put('f_z25', 'annual', 'zero_hours', 'year=2025', C.int);
+  put('f_z26', 'annual', 'zero_hours', 'year=2026', C.int);
+  put('f_c24', 'annual', 'solar_capture_licensed', 'year=2024', C.f2);
+  put('f_c26', 'annual', 'solar_capture_licensed', 'year=2026', C.f2);
+  put('f_mae', 'model_metrics', 'mae', 'key=ensemble', C.f2);
+  put('f_maen', 'model_metrics', 'mae', 'key=naive_D', C.f2);
+  put('f_maep', 'model_metrics', 'mae', 'key=puant_ext', C.f2);
+  put('f_maev2', 'model_metrics', 'mae', 'key=ensemble_v2', C.f2);
+  put('f_agg', 'aggregator', 'reduction', 'key=sens_baz_40', C.pct0);
+  put('f_agg1', 'aggregator', 'reduction', 'key=one_region_40', C.pct0);
+  put('f_aglo', 'aggregator', 'reduction', 'key=sens_düşük_40', C.pct0);
+  put('f_aghi', 'aggregator', 'reduction', 'key=sens_yüksek_40', C.pct0);
+  put('f_bshare', 'battery', 'share_of_perfect', 'key=2h_model', C.pct0);
+  put('f_brev', 'battery', 'p2', 'key=2h_model', C.usd);
+  put('f_bextra', 'battery_econ', 'extra_revenue_needed_usd_per_mw_yr', 'duration=2h', C.usd);
+  put('f_z35', 'scenarios', 'zero_price_hours', 'key=baz|hedef_120|uep_7.5GW_2s', C.int);
+  put('f_cur35', 'scenarios', 'curtail_twh', 'key=baz|hedef_120|uep_7.5GW_2s', C.f1);
+  put('f_cur35h', 'scenarios', 'curtail_twh', 'key=baz|hedef_120|yuksek_20GW_4s', C.f1);
+  put('b_raw', 'model_band', 'value', 'metric=q10_q90_raw', C.pct0);
+  put('b_cal', 'model_band', 'value', 'metric=q10_q90_calibrated', C.pct0);
+  put('a_nat', 'aggregator_meta', 'value', 'metric=national_daylight_nMAE', C.pct1);
+  const col = (i) => () => dash.colors[i];
+  C.swatch('sw_a', () => 'var(--color-fg)'); C.swatch('sw_f', col(0)); C.swatch('sw_n', () => 'var(--cds-chart-muted)');
+  C.swatch('sw_ptf', col(0)); C.swatch('sw_smf', () => 'var(--cds-chart-muted)');
+  C.swatch('sw_up', col(0)); C.swatch('sw_dn', col(1));
+  C.swatch('sw_s', () => 'var(--cds-chart-muted)'); C.swatch('sw_p', col(0));
+  C.swatch('sw_2h', col(0)); C.swatch('sw_4h', col(1));
+  C.swatch('sw_sel', col(0)); C.swatch('sw_act', () => 'var(--color-fg)'); C.swatch('sw_mod', () => 'var(--cds-chart-muted)');
+})();
+</script>
+
+<script>
+(function () {
+  const C = window.V;
+  // aylık PTF
+  dash.draw('ch_monthly', (el) => {
+    const r = C.rows('monthly'); if (!r) { el.replaceChildren(); return; }
+    const t = (d) => new Date(d.month + '-01T00:00:00Z');
+    C.lines(el, [{ name: 'SMF', color: 'var(--cds-chart-muted)', width: 1.5, pts: r.map((d) => ({ x: t(d), y: C.num(d.smf_usd) })) },
+                 { name: 'PTF', color: dash.colors[0], pts: r.map((d) => ({ x: t(d), y: C.num(d.ptf_usd) })) }], { xKind: 'time', yFmt: (v) => '$' + d3.format(',.0f')(v), xFmt: d3.utcFormat('%Y'), tipHead: (x) => d3.utcFormat('%Y-%m')(new Date(x)) });
+  });
+  // gün içi profil
+  const HY = ['2016', '2019', '2022', '2024', '2025', '2026'];
+  const hyColor = (y, i) => (y === '2026' ? dash.colors[0] : y === '2025' ? dash.colors[1] : y === '2024' ? dash.colors[2] : y === '2016' ? dash.colors[3] : 'var(--cds-chart-muted)');
+  dash.draw('ch_hour', (el) => {
+    const r = C.rows('hour_profile'); if (!r) { el.replaceChildren(); return; }
+    const series = HY.map((y, i) => ({ name: y, color: hyColor(y, i), width: y === '2026' ? 2.5 : 1.5, dash: (y === '2019' || y === '2022') ? '4 3' : null,
+      pts: r.filter((d) => d.year === y).map((d) => ({ x: C.num(d.hour), y: C.num(d.ratio) })) }));
+    C.lines(el, series, { yFmt: d3.format('.2f'), xFmt: (h) => String(h).padStart(2, '0') + ':00', xTicks: 6, ymin: 0.4, tipHead: (h) => 'Saat ' + String(h).padStart(2, '0') + ':00' });
+  });
+  dash.draw('lg_hour', (el) => {
+    el.replaceChildren(); if (!C.rows('hour_profile')) return;
+    HY.forEach((y, i) => { const s = document.createElement('span'); const w = document.createElement('span'); w.className = 'v-sw'; w.style.background = hyColor(y, i); s.appendChild(w); s.appendChild(document.createTextNode(y + (y === '2026' ? ' (Oca–Eki)' : ''))); el.appendChild(s); });
+  });
+  const MIX = [['hidro', 'Hidro'], ['dogalgaz', 'Doğalgaz'], ['ithal_komur', 'İthal kömür'], ['yerli_komur', 'Yerli kömür'], ['ruzgar', 'Rüzgâr'], ['gunes_lisansli', 'Güneş (lisanslı)']];
+  const mixColor = (i) => dash.colors[i % dash.colors.length];
+  dash.draw('ch_mix', (el) => {
+    const r = C.rows('gen_mix'); if (!r) { el.replaceChildren(); return; }
+    C.lines(el, MIX.map(([k, lab], i) => ({ name: lab, color: mixColor(i), pts: r.filter((d) => d.source === k).map((d) => ({ x: C.num(d.year), y: C.num(d.twh) })) })),
+      { ymin: 0, yFmt: (v) => d3.format(',.0f')(v), xFmt: (v) => String(v), xTicks: 6, tipHead: (v) => String(v) + (v === 2026 ? ' (Oca–Eki)' : '') });
+  });
+  dash.draw('lg_mix', (el) => {
+    el.replaceChildren(); if (!C.rows('gen_mix')) return;
+    MIX.forEach(([k, lab], i) => { const s = document.createElement('span'); const w = document.createElement('span'); w.className = 'v-sw'; w.style.background = mixColor(i); s.appendChild(w); s.appendChild(document.createTextNode(lab)); el.appendChild(s); });
+  });
+  dash.draw('ch_imb', (el) => {
+    const r = C.rows('imbalance_annual'); if (!r) { el.replaceChildren(); return; }
+    C.lines(el, [
+      { name: 'Fazla üretim', color: dash.colors[0], pts: r.map((d) => ({ x: C.num(d.year), y: C.num(d.up_cost_pct) })) },
+      { name: 'Eksik üretim', color: dash.colors[1], dash: '4 3', pts: r.map((d) => ({ x: C.num(d.year), y: C.num(d.down_cost_pct) })) },
+    ], { ymin: 0, yFmt: C.pct0, xFmt: (v) => String(v), xTicks: 6, tipHead: (v) => String(v) });
+  });
+  dash.draw('tb_imb', (el) => {
+    const r = C.rows('imbalance_annual'); if (!r) { el.replaceChildren(); return; }
+    const n = (f) => (v) => f(Number(v));
+    C.tbody(el, r, [['year'], ['ptf_usd', n(C.f1)], ['smf_usd', n(C.f1)], ['abs_gap_usd', n(C.f1)], ['deficit_share', n(C.pct0)], ['surplus_share', n(C.pct0)], ['up_cost_usd', n(C.f2)], ['down_cost_usd', n(C.f2)], ['up_cost_pct', n(C.pct1)], ['down_cost_pct', n(C.pct1)]], 'year');
+  });
+  dash.draw('tb_annual', (el) => {
+    const r = C.rows('annual'); if (!r) { el.replaceChildren(); return; }
+    const n = (f) => (v) => f(Number(v));
+    C.tbody(el, r, [['year'], ['period'], ['ptf_usd', n(C.f1)], ['official_usd', n(C.f1)], ['ptf_tl', n(C.f1)], ['official_tl', n(C.f1)], ['zero_hours', n(C.int)], ['midday_ratio', n(C.f2)], ['evening_ratio', n(C.f2)], ['spread4', n(C.f1)], ['solar_capture_irradiance', n(C.f3)], ['solar_capture_licensed', n(C.f3)], ['consumption_twh', n(C.f1)]], 'year');
+  });
+})();
+</script>
+
+<script>
+(function () {
+  const C = window.V;
+  const ORDER = ['naive_week', 'naive_D', 'naive_mix', 'ridge', 'lgb_q50', 'lgb_unscaled', 'ensemble_v2', 'puant_ext', 'ensemble'];
+  dash.draw('ch_mae', (el) => {
+    const r = C.rows('model_metrics'); if (!r) { el.replaceChildren(); return; }
+    const items = ORDER.map((k) => r.find((d) => d.key === k)).filter(Boolean).map((d) => ({ label: d.model, value: C.num(d.mae),
+      color: d.key === 'ensemble' ? dash.colors[0] : d.key === 'puant_ext' ? dash.colors[1] : 'var(--cds-chart-muted)' }));
+    C.hbars(el, items, { fmt: (v) => '$' + C.f2(v) });
+  });
+  dash.draw('ch_fc', (el) => {
+    const r = C.rows('forecast_sample'); if (!r) { el.replaceChildren(); return; }
+    const t = (d) => new Date(d.ts + ':00Z');
+    C.lines(el, [
+      { name: 'Naif', color: 'var(--cds-chart-muted)', width: 1.5, dash: '4 3', pts: r.map((d) => ({ x: t(d), y: C.num(d.naive) })) },
+      { name: 'Tahmin', color: dash.colors[0], pts: r.map((d) => ({ x: t(d), y: C.num(d.forecast) })) },
+      { name: 'Gerçekleşen', color: 'var(--color-fg)', width: 1.5, pts: r.map((d) => ({ x: t(d), y: C.num(d.actual) })) },
+    ], { xKind: 'time', band: r.map((d) => ({ x: t(d), lo: C.num(d.q10), hi: C.num(d.q90) })), bandColor: dash.colors[0],
+      yFmt: (v) => '$' + d3.format(',.0f')(v), xFmt: d3.utcFormat('%-d %b'), tipHead: (x) => d3.utcFormat('%Y-%m-%d %H:00')(new Date(x)) });
+  });
+  dash.draw('ch_maeh', (el) => {
+    const r = C.rows('mae_hour'); if (!r) { el.replaceChildren(); return; }
+    C.lines(el, [
+      { name: 'Naif', color: 'var(--cds-chart-muted)', width: 1.5, pts: r.map((d) => ({ x: C.num(d.hour), y: C.num(d.naive) })) },
+      { name: 'Topluluk', color: dash.colors[0], pts: r.map((d) => ({ x: C.num(d.hour), y: C.num(d.ensemble) })) },
+    ], { height: 240, yFmt: (v) => '$' + d3.format(',.0f')(v), xFmt: (h) => String(h).padStart(2, '0') + ':00', xTicks: 6, tipHead: (h) => 'Saat ' + String(h).padStart(2, '0') + ':00' });
+  });
+  dash.draw('ch_fi', (el) => {
+    const r = C.rows('feature_importance'); if (!r) { el.replaceChildren(); return; }
+    C.hbars(el, r.slice(0, 10).map((d, i) => ({ label: d.feature, value: C.num(d.share), color: i < 3 ? dash.colors[0] : 'var(--cds-chart-muted)' })), { fmt: C.pct1 });
+  });
+  dash.draw('tb_model', (el) => {
+    const r = C.rows('model_metrics'); if (!r) { el.replaceChildren(); return; }
+    const n = (f) => (v) => f(Number(v));
+    C.tbody(el, ORDER.slice().reverse().map((k) => r.find((d) => d.key === k)).filter(Boolean),
+      [['model'], ['mae', n(C.f2)], ['rmse', n(C.f2)], ['smape', n(C.f1)], ['rmae', n(C.f3)], ['mae_tl', n(C.int)], ['mae_p1', n(C.f2)], ['mae_p2', n(C.f2)]], 'key', 'ensemble');
+  });
+})();
+</script>
+
+<script>
+(function () {
+  const C = window.V;
+  dash.draw('ch_agg', (el) => {
+    const r = C.rows('aggregator'); if (!r) { el.replaceChildren(); return; }
+    const s = r.filter((d) => d.case === 'size').sort((a, b) => a.n_sites - b.n_sites);
+    const xs = s.map((d) => Math.log2(C.num(d.n_sites)));
+    C.lines(el, [
+      { name: 'Tek başına', color: 'var(--cds-chart-muted)', pts: s.map((d, i) => ({ x: xs[i], y: C.num(d.imbalance_share_standalone) })) },
+      { name: 'Toplayıcı', color: dash.colors[0], pts: s.map((d, i) => ({ x: xs[i], y: C.num(d.imbalance_share_pooled) })) },
+    ], { ymin: 0, yFmt: C.pct0, xFmt: (v) => String(Math.round(2 ** v)), xTicks: 8, tipHead: (v) => Math.round(2 ** v) + ' tesis' });
+  });
+  dash.draw('tb_agg', (el) => {
+    const r = C.rows('aggregator'); if (!r) { el.replaceChildren(); return; }
+    const n = (f) => (v) => f(Number(v));
+    C.tbody(el, r, [['case_label'], ['n_sites'], ['site_daylight_nMAE', n(C.pct1)], ['reduction', n(C.pct0)], ['real_cost_standalone', n(C.f2)], ['real_cost_pooled', n(C.f2)], ['real_saving', n(C.f2)], ['real_saving_pct_revenue', n(C.pct1)], ['real_cost_standalone_2026', n(C.f2)], ['real_cost_pooled_2026', n(C.f2)]], 'key', 'sens_baz_40');
+  });
+  dash.draw('ch_bat', (el) => {
+    const r = C.rows('battery'); if (!r) { el.replaceChildren(); return; }
+    const items = r.map((d) => ({ label: d.strategy + ' · ' + (d.duration === '2h' ? '2 saat' : '4 saat'), value: C.num(d.usd_per_mw_year), color: d.duration === '2h' ? dash.colors[0] : dash.colors[1] }));
+    C.hbars(el, items, { fmt: C.usd });
+  });
+  dash.draw('tb_bat', (el) => {
+    const r = C.rows('battery'); if (!r) { el.replaceChildren(); return; }
+    const n = (f) => (v) => f(Number(v));
+    C.tbody(el, r, [['strategy'], ['duration'], ['usd_per_mw_year', n(C.usd)], ['share_of_perfect', n(C.pct0)], ['p1', n(C.usd)], ['p2', n(C.usd)]], 'key', '2h_model');
+  });
+  dash.draw('tb_econ', (el) => {
+    const r = C.rows('battery_econ'); if (!r) { el.replaceChildren(); return; }
+    const n = (f) => (v) => f(Number(v));
+    C.tbody(el, r, [['duration'], ['capex_usd_per_mw', n(C.usd)], ['arbitrage_rev_last12', n(C.usd)], ['simple_payback_yrs', n(C.f1)], ['cum_cash_yr15_undiscounted', n(C.usd)], ['npv_arbitrage_only', n(C.usd)], ['extra_revenue_needed_usd_per_mw_yr', n(C.usd)], ['breakeven_capex_usd_per_kwh_arbitrage_only', n(C.f1)]], 'duration');
+  });
+})();
+</script>
+
+<script>
+(function () {
+  const C = window.V;
+  const selKey = () => `${C.sel.dem}|${C.sel.sup}|${C.sel.sto}`;
+  dash.draw('ch_s35', (el) => {
+    const r = C.rows('scenario_hours'); if (!r) { el.replaceChildren(); return; }
+    const get = (k) => r.filter((d) => d.key === k).map((d) => ({ x: C.num(d.hour), y: C.num(d.price) }));
+    C.lines(el, [
+      { name: '2025 model', color: 'var(--cds-chart-muted)', width: 1.5, dash: '4 3', pts: get('2025_model') },
+      { name: '2025 gerçek', color: 'var(--color-fg)', width: 1.5, pts: get('2025_actual') },
+      { name: '2035 seçili', color: dash.colors[0], width: 2.5, pts: get(selKey()) },
+    ], { ymin: 0, yFmt: (v) => '$' + d3.format(',.0f')(v), xFmt: (h) => String(h).padStart(2, '0') + ':00', xTicks: 6, tipHead: (h) => 'Saat ' + String(h).padStart(2, '0') + ':00' });
+  });
+  dash.draw('ch_heat', (el) => {
+    const r = C.rows('scenarios'); el.replaceChildren(); if (!r) return;
+    const SUP = [['uep2022', 'UEP 2022'], ['mevcut_hiz', 'Mevcut hız'], ['hedef_120', '120 GW']];
+    const STO = [['yok', 'Yok'], ['uep_7.5GW_2s', '7.5 GW/2s'], ['yuksek_20GW_4s', '20 GW/4s']];
+    const W = Math.max(280, el.clientWidth), H = 220;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`);
+    const ml = C.measure(svg, SUP.map((s) => s[1])) + 12, mt = 22;
+    const cw = (W - ml) / 3, ch = (H - mt) / 3;
+    STO.forEach(([k, lab], j) => svg.append('text').attr('x', ml + cw * j + cw / 2).attr('y', 14).attr('text-anchor', 'middle').style('font-size', 'var(--cds-font-size-caption)').style('fill', 'var(--color-fg-muted)').text(lab));
+    SUP.forEach(([sk, slab], i) => {
+      svg.append('text').attr('x', ml - 8).attr('y', mt + ch * i + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'end').style('font-size', 'var(--cds-font-size-caption)').style('fill', 'var(--color-fg)').text(slab);
+      STO.forEach(([tk], j) => {
+        const key = `${C.sel.dem}|${sk}|${tk}`; const row = r.find((d) => d.key === key); if (!row) return;
+        const v = C.num(row.solar_capture_ratio);
+        const sel = key === selKey();
+        svg.append('rect').attr('x', ml + cw * j + 2).attr('y', mt + ch * i + 2).attr('width', cw - 4).attr('height', ch - 4).attr('rx', 4)
+          .style('fill', dash.colors[0]).attr('fill-opacity', 0.12 + 0.7 * Math.max(0, Math.min(1, (v - 0.2) / 0.75)))
+          .style('stroke', sel ? 'var(--color-fg)' : 'none').attr('stroke-width', 2);
+        svg.append('text').attr('x', ml + cw * j + cw / 2).attr('y', mt + ch * i + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'middle')
+          .style('font-family', 'var(--font-anthropic-serif)').style('font-size', 'var(--cds-font-size-heading)').style('fill', 'var(--color-fg)').text(C.f2(v));
+      });
+    });
+  });
+  dash.draw('tb_scen', (el) => {
+    const r = C.rows('scenarios'); if (!r) { el.replaceChildren(); return; }
+    const n = (f) => (v) => f(Number(v));
+    C.tbody(el, r, [['demand'], ['supply'], ['storage'], ['variant'], ['avg_price', n(C.f1)], ['solar_capture_ratio', n(C.f2)], ['wind_capture_ratio', n(C.f2)], ['zero_price_hours', n(C.int)], ['curtail_twh', n(C.f1)], ['curtail_share_vre', n(C.pct1)], ['vre_share', n(C.pct0)], ['gas_twh', n(C.f1)], ['spread4', n(C.f1)], ['unserved_gwh', n(C.f1)]], 'key', selKey());
+  });
+})();
+</script>
